@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="icon" href="/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://telegram.org/js/telegram-web-app.js?1"></script>
+        <script src="https://cdn.jsdelivr.net/npm/tsparticles-preset-confetti@2/tsparticles.preset.confetti.bundle.min.js"></script>
+        <title>Vite App</title>
+  </head>
+    <body>
+        <div id="app"></div>
+        <script type="module" src="/src/main.js"></script>
+        <style>
+            :root {
+                font-size: 62.5%;
+                --color-bg: #1C1C1C;
+                --color-box: #282828;
+                --color-box-border: #3D3D3D;
+                --color-text: white;
+                --color-inactive-text: #808080;
+
+                --shadow: 0 .25rem .25rem rgba(0, 0, 0, 0.25);
+            }
+
+            body{
+                background-color: var(--color-bg);
+                /* background-color: var(--tg-theme-secondary-bg-color); */
+                overflow-x: hidden;
+                /* overflow-y: hidden; */
+                /* min-width: 100%; */
+                max-width: 100%;
+                /* max-width: 390px; */
+                margin: 0;
+                font-family: system-ui;
+                font-size: 1.6rem;
+            }
+
+            #app {
+                padding: 0;
+            }
+        </style>
+    </body>
+</html>
