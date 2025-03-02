@@ -1,26 +1,225 @@
 <script setup>
+import {ref} from "vue";
 
+const PAIR_DURATION = 4800000; // В миллисекундах
+const SATURDAY_PAIR_DURATION = 4500000;
+
+const PAIRS_HOURSTART = [8, 10, 12, 13];
+const PAIRS_MINSTART = [45, 25, 5, 35];
+const BREAKS_HOURSTART = [8 ,10, 11, 13];
+const BREAKS_MINSTART = [0 ,5, 45, 25];
+
+const SATURDAY_PAIRS_HOURSTART = [8, 10, 11, 13];
+const SATURDAY_PAIRS_MINSTART = [45, 10, 35, 0];
+const SATURDAY_BREAKS_HOURSTART = [8 ,10, 11, 12];
+const SATURDAY_BREAKS_MINSTART = [0 ,0, 25, 50];
+
+let line = document.getElementById('progress_line');
+let test = document.getElementById('test');
+let player = document.getElementById('player');
+let bellList = document.getElementById('bell_list');
+let saturdayBellList = document.getElementById('saturday_bell_list');
+let dummy = document.getElementById('dummy');
+
+const timeLeft = ref("");
+const timePassed = ref("");
+const title = ref("");
+const titleStart = ref("");
+const titleEnd = ref("");
+
+const progressWidth = ref(0);
+
+let shootTime = false;
+
+function padTo2(num) {
+    if (num === 0) return '00'
+    if (num>=10) return `${num}`
+    return `0${num}`
+}
+
+function getTimeFormatted(date, beforeS){       // beforeS = 'Passed' || 'Left'
+    date = new Date(Math.abs(date.getTime()));
+    let hours = date.getUTCHours();
+    let minutes = date.getUTCMinutes();
+    let seconds = date.getUTCSeconds();
+    let s = '';
+    if (beforeS == 'Left' && seconds != 0 && minutes !=0) {
+        minutes += 1;
+    }
+    if (minutes == 0 && hours == 0)
+        s += `${seconds} сек.`;
+    if (hours != 0) {
+        s += `${hours} час`;
+        if (minutes != 0) s += ' ';
+    }
+    if (minutes != 0) {
+        if (minutes % 10 == 1 && (minutes/100).toFixed(1) != 0.1)
+            s += `${minutes} минута`;
+        else if ((minutes % 10 > 1 && minutes % 10 < 5) && (minutes/100).toFixed(1) != 0.1)
+            s += `${minutes} минуты`;
+        else
+            s += `${minutes} минут`;
+    }
+    if (beforeS == 'Passed') {
+        if (s.includes('час'))
+            timePassed.value = 'Прошел '+s;
+        else if (s.includes('минута'))
+            timePassed.value = 'Прошла '+s;
+        else if (s.includes('минут'))
+            timePassed.value = 'Прошло '+s;
+        else if (s.includes('сек.'))
+            timePassed.value = 'Прошло '+s;
+    }
+    else if (beforeS == 'Left') {
+        if (s.includes('час'))
+            timeLeft.value = 'Остался '+s;
+        else if (s.includes('минута'))
+            timeLeft.value = 'Осталась '+s;
+        else if (s.includes('минут'))
+            timeLeft.value = 'Осталось '+s;
+        else if (s.includes('сек.'))
+            timeLeft.value = 'Осталось '+s;
+    }
+    // return `${padTo2(hours)}:${padTo2(minutes)}:${padTo2(seconds)}`;
+}
+
+function updatePairProgress(hourStart, minStart, duration) {
+    let now = new Date();
+    let start = new Date();
+    start.setHours(hourStart, minStart, 0);
+    let end = new Date();
+    if (duration == PAIR_DURATION)
+        end.setHours(start.getHours() + 1, start.getMinutes() + 20, 0);
+    else
+        end.setHours(start.getHours() + 1, start.getMinutes() + 15, 0);
+    getTimeFormatted(new Date(start - now), 'Passed');
+    getTimeFormatted(new Date(end - now), 'Left');
+    // let progress = (Math.abs(start - now))/duration * 100;
+    progressWidth.value = (Math.abs(start - now))/duration * 100;
+}
+
+function updateBreakProgress(hourBreakStart, minBreakStart, breakDuration) {        // breakDuration в минутах
+    let now = new Date();
+    let start = new Date();
+    start.setHours(hourBreakStart, minBreakStart, 0);
+    let end = new Date();
+    end.setHours(start.getHours(), start.getMinutes() + breakDuration, 0);
+    getTimeFormatted(new Date(start - now), 'Passed');
+    getTimeFormatted(new Date(end - now), 'Left');
+    // let progress = (Math.abs(start-now))/(breakDuration*60000)*100
+    progressWidth.value = (Math.abs(start-now))/(breakDuration*60000)*100;
+}
+
+function getTime(PairHourArray, PairMinArray, breakHourArray, breakMinArray) {
+    let now = new Date();
+    let nowTime = (now.getHours()*60+now.getMinutes())*60000+now.getSeconds()*1000;
+    if ( nowTime < 8*3600000  &&  nowTime > 5*3600000 ) {
+        timePassed.value = 'Хорошего';
+        timeLeft.value = 'дня!';
+        progressWidth.value = 0;
+    }
+    for (let i = 0; i<4; i++) {
+        let start = (PairHourArray[i]*60 + PairMinArray[i])*60000;
+        if (PairHourArray != SATURDAY_PAIRS_HOURSTART)
+            var end = start + PAIR_DURATION;
+        else
+            var end = start + SATURDAY_PAIR_DURATION;
+        let startBreak = (breakHourArray[i]*60 + breakMinArray[i])*60000;
+
+        if (i == 0) {
+            var duration = 45;
+        } else if (i < 3  &&  PairHourArray != SATURDAY_PAIRS_HOURSTART) {
+            var duration = 20;
+        } else {
+            var duration = 10;
+        }
+        let endBreak = startBreak + duration*60000;
+
+        if ( nowTime >= start && nowTime < end ) {
+            let endHour = Math.floor(end/3600000);
+            let endMin = (end/60000)-endHour*60;
+            title.value = `${i+1} пара`;
+            titleStart.value = `${PairHourArray[i]}:${padTo2(PairMinArray[i])}`;
+            titleEnd.value = `${endHour}:${padTo2(endMin)}`;
+            if (PairHourArray != SATURDAY_PAIRS_HOURSTART)
+                updatePairProgress(PairHourArray[i], PairMinArray[i], PAIR_DURATION);
+            else
+                updatePairProgress(PairHourArray[i], PairMinArray[i], SATURDAY_PAIR_DURATION);
+            return;
+
+        } else if ( nowTime >= startBreak && nowTime < endBreak )  {
+            if ( duration != 45 ) {
+                if (progressWidth.value === 0) {
+                    shootTime = true;
+                }
+                title.value = `Перерыв – ${duration} минут`;
+            }
+            else {
+                title.value = `Перерыв`;
+            }
+            updateBreakProgress(breakHourArray[i], breakMinArray[i], duration);
+            return;
+
+        } else if (i == 3 && nowTime > (8*60+25)*60000) {
+            title.value = 'Пары кончились'
+            timePassed.value = 'Приятного';
+            timeLeft.value = 'отдыха!';
+            progressWidth.value = 100;
+            shootTime = true;
+        }
+    }
+}
+
+const isSaturday = ref(false);
+// function highlight(day = "default") {      // "default" | "saturday"
+//     list.style.backgroundClip = 'padding-box';
+//     list.style.border = '0.5vw solid transparent';
+//     return;
+// }
+
+// First we check if you support touch, otherwise it's click:
+let touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
+
+//
+//      ИНТЕРВАЛЫ
+//
+let today = new Date().getDay();
+if (today != 6 && today !=0) {
+    let interval = setInterval(getTime, 1000, PAIRS_HOURSTART, PAIRS_MINSTART, BREAKS_HOURSTART, BREAKS_MINSTART);
+    // highlight();
+    isSaturday.value = false;
+} else if (today == 6) {
+    let interval = setInterval(getTime, 1000, SATURDAY_PAIRS_HOURSTART, SATURDAY_PAIRS_MINSTART, SATURDAY_BREAKS_HOURSTART, SATURDAY_BREAKS_MINSTART);
+    // highlight();
+    isSaturday.value = true;
+}
+else if (today == 0) {
+    title.value = `Выходной`
+    timePassed.value = 'Приятного';
+    timeLeft.value = 'отдыха!';
+    progressWidth.value = 100;
+}
 </script>
 
 <template>
     <div class="container">
         <div id="progressBox">
             <div id="titleBox">
-                <div id="title-start">&nbsp</div>
-                <div id="title">&nbsp</div>
-                <div id="title-end">&nbsp</div>
+                <div id="title-start">{{ titleStart }}10:05</div>
+                <div id="title">{{ title }}</div>
+                <div id="title-end">{{ titleEnd }}11:45</div>
             </div>
             <div id="progress_bar">
-                <div id="progress_line"></div>
+                <div id="progress_line" :style="`width: ${progressWidth}%`"></div>
                 <div id="timeBox">
-                    <div class="text" id="timerPassed"></div>
-                    <div class="text" id="timerLeft"></div>
+                    <div class="text" id="timerPassed" :hidden="title === `Перерыв`">{{ timePassed }}</div>
+                    <div class="text" id="timerLeft">{{ timeLeft }}</div>
                 </div>
             </div>
         </div>
 
         <div id="pairs_block">
-            <table id="bell_list">
+            <table id="bell_list" :style="isSaturday?'--border-color: var(--color-box-border)':'--border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
                 <tr class="notlast">
                     <td>08:45</td>
                     <td>-</td>
@@ -42,7 +241,7 @@
                     <td>14:55</td>
                 </tr>
             </table>
-            <table id="saturday_bell_list">
+            <table id="saturday_bell_list" :style="!isSaturday?'--border-color: var(--color-box-border)':'--border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
                 <tr class="notlast">
                     <td>08:45</td>
                     <td>-</td>
@@ -65,15 +264,6 @@
                 </tr>
             </table>
         </div>
-
-        <div id="emoji_placeholder">
-            <tgs-player autoplay loop mode="normal" src="" class="emoji-player" id="emoji">
-            </tgs-player>
-            <!-- <dotlottie-player class="emoji-player" id="player" src="" background="transparent" speed="1" direction="1" mode="normal" loop autoplay mute>
-            </dotlottie-player> -->
-            <!-- <video playsinline muted autoplay loop src="Stickers/Break.mov" type="video/mov" id="player">
-            </video> -->
-        </div>
         <footer>
             <img id="dummy" src="/public/dummy.png" alt="">
         </footer>
@@ -81,27 +271,24 @@
 </template>
 
 <style scoped>
-.container{
-    margin: 0;
+.container {
+    margin: 1.6rem;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    gap: 1rem;
 }
 
-.text{
+.text {
     color: white;
     font-weight: bold;
-    font-size: 4vw;
 }
 
 #progressBox {
-    /* background-color: var(--tg-theme-bg-color); */
-    /* height: 38vw; */
-    /* border-radius: 0 0 5vw 5vw; */
 }
 
 #titleBox {
-    width: 86%;
+    width: 96%;
     margin: auto;
     margin-top: .5vw;
     display: flex;
@@ -110,16 +297,9 @@
     align-items: flex-end;
     font-size: 3.4vw;
     color: var(--color-text);
-    /* background-color: red; */
-    /* justify-content: space-evenly; */
 }
 
 #title {
-    /* position: absolute; */
-    /* top: -25%; */
-    /* margin-top: 2px;
-    margin-bottom: 4px; */
-    /* margin-top: 0.5vw; */
     padding: .5vw;
     text-align: center;
     font-size: 5vw;
@@ -127,30 +307,35 @@
 
 #timeBox {
     position: absolute;
-    top: 50%;
-    left: 4%;
-    transform: translate(0px, -50%);
+    top: 0;
+    //top: 50%;
+    //left: 4%;
+    //transform: translate(0px, -50%);
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    margin-left: 1rem;
+    gap: .2rem;
 }
 
 #timerPassed {
-    margin-top: 0vw;
-    /* margin-top: 0px; */
 }
 
 #timerLeft {
-    margin-top: 0.5vw;
-    /* margin-top: 5px; */
 }
 
 #progress_bar {
     position: relative;
     margin: 0 auto;
-    border-radius: 6vw;
-    width: 96%;
-    height: 25vw;
-    background-color: black;
-    -webkit-mask:linear-gradient(#fff 0 0);
-    mask:linear-gradient(#fff 0 0);
+    border-radius: 1.6rem;
+    width: 100%;
+    height: 9.2rem;
+    background-color:black;
+    -webkit-mask: linear-gradient(#ffffff 0 0);
+    mask: linear-gradient(#fff 0 0);
 }
 
 #progress_bar::before {
@@ -167,7 +352,7 @@
     width: 0%;
     height: 100%;
     background-color: white;
-    -webkit-mask:linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0);
     mask:linear-gradient(#fff 0 0);
 }
 
@@ -181,85 +366,57 @@
     background-image: linear-gradient(90deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);
 }
 
-.emoji-player {
-    /* width: 50%; */
-    width: 25vw;
-    /* width: 10rem; */
-    height: 0%;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-#emoji_placeholder{
-    margin: -1vw auto;
-    width: 100%;
-    /* margin-top: vw; */
-    text-align: center;
-}
-
-p {
-    /* position: absolute; */
-    color: var(--tg-theme-hint-color);
-    /* position: absolute; */
-    /* margin: auto; */
-    /* top:0%; */
-    /* margin-right: 2%; */
-    /* bottom: 0.2vw; */
-    text-align: center;
-    margin: auto;
-    /* margin-top: ;
-    margin-left: 5vw; */
-    font-size: 2vw;
-    width: 100vw;
-    /* font-size: 90%; */
-    /* max-width: 70%; */
-}
-
-a {
-    color: var(--tg-theme-link-color);
-    text-decoration: none;
-}
-
 table {
+    --border: .1rem;
     position: relative;
-    margin: 4vw 2vw;
-    width: 10vw;
-    /* height: 40vw;
-    width: 70vw; */
-    /* height: 40vw;
-    width: 45vw; */
-    /* height: 30vw;
-    width: 35vw; */
-    background-color: var(--tg-theme-bg-color);
-    color: var(--tg-theme-text-color);
-    /* padding: 2vw 3vw; */
-    padding: 3vw 4vw;
-    font-size: 5vw;
+    width: 100%;
+    background-color: var(--color-box);
+    color: var(--color-inactive-text);
+    font-size: 2rem;
     text-align: center;
-    /* word-spacing: 1vw; */
-    border-radius: 4vw;
-    border: 0.7vw solid var(--tg-theme-hint-color);
-    /* background-clip: padding-box; */
+    border-radius: 1rem;
+    border: var(--border) solid transparent;
+    background-clip: padding-box;
+    border-collapse: collapse;
 }
 
 table::after {
     position: absolute;
-    top: -0.5vw; bottom: -0.5vw;
-    left: -0.5vw; right: -0.5vw;
-    background: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);
+    top: calc(var(--border) * -1); bottom: calc(var(--border) * -1);
+    left: calc(var(--border) * -1); right: calc(var(--border) * -1);
+    background: var(--border-color);
     content: '';
     z-index: -1;
-    border-radius: 4vw;
+    border-radius: 1rem;
+}
+
+tr {
+    position: relative;
+}
+
+tr:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    display: block;
+    bottom: 0;
+    left: 1rem;
+    right: 1rem;
+    //width: calc(100% - 2rem);
+    height: 0.08rem;
+    background-color: var(--color-box-border);
+}
+
+td {
+    padding: .5rem 0;
 }
 
 .notlast>td {
-    padding-bottom: 2vw;
 }
 
 #pairs_block {
-    display: -webkit-box;
+    display: flex;
     justify-content: center;
-    -webkit-box-pack: center;
+    gap: 1rem;
 }
 
 footer {
