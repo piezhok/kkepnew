@@ -219,8 +219,8 @@ else if (today == 0) {
         </div>
 
         <div id="pairs_block">
-            <div>
-                <table class="wrap" id="bell_list" :style="isSaturday?'--border-color: var(--color-box-border)':'color: var(--color-text); --border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
+<!--            <div>-->
+                <table id="bell_list" :style="isSaturday?'--border-color: var(--color-box-border)':'color: var(--color-text); --border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
                     <tr class="notlast">
                         <td>08:45</td>
                         <td>-</td>
@@ -242,8 +242,8 @@ else if (today == 0) {
                         <td>14:55</td>
                     </tr>
                 </table>
-            </div>
-            <div>
+<!--            </div>-->
+<!--            <div>-->
                 <table id="saturday_bell_list" :style="!isSaturday?'--border-color: var(--color-box-border)':'--border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
                     <tr class="notlast">
                         <td>08:45</td>
@@ -266,7 +266,7 @@ else if (today == 0) {
                         <td>14:15</td>
                     </tr>
                 </table>
-            </div>
+<!--            </div>-->
         </div>
 <!--        <footer>-->
 <!--            <img id="dummy" src="/public/dummy.png" alt="">-->
@@ -379,14 +379,13 @@ table {
     background-color: var(--color-box);
     border-radius: 1rem;
     position: relative;
-    padding: 1rem;
     width: 100%;
     color: var(--color-inactive-text);
     font-size: 2rem;
     text-align: center;
     border: var(--border) solid transparent;
     background-clip: padding-box;
-    border-collapse: collapse;
+    //border-collapse: collapse;
 }
 
 table::after {
