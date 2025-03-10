@@ -219,63 +219,67 @@ else if (today == 0) {
         </div>
 
         <div id="pairs_block">
-            <table id="bell_list" :style="isSaturday?'--border-color: var(--color-box-border)':'--border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
-                <tr class="notlast">
-                    <td>08:45</td>
-                    <td>-</td>
-                    <td>10:05</td>
-                </tr>
-                <tr class="notlast">
-                    <td>10:25</td>
-                    <td>-</td>
-                    <td>11:45</td>
-                </tr>
-                <tr class="notlast">
-                    <td>12:05</td>
-                    <td>-</td>
-                    <td>13:25</td>
-                </tr>
-                <tr>
-                    <td>13:35</td>
-                    <td>-</td>
-                    <td>14:55</td>
-                </tr>
-            </table>
-            <table id="saturday_bell_list" :style="!isSaturday?'--border-color: var(--color-box-border)':'--border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
-                <tr class="notlast">
-                    <td>08:45</td>
-                    <td>-</td>
-                    <td>10:00</td>
-                </tr>
-                <tr class="notlast">
-                    <td>10:10</td>
-                    <td>-</td>
-                    <td>11:25</td>
-                </tr>
-                <tr class="notlast">
-                    <td>11:35</td>
-                    <td>-</td>
-                    <td>12:50</td>
-                </tr>
-                <tr>
-                    <td>13:00</td>
-                    <td>-</td>
-                    <td>14:15</td>
-                </tr>
-            </table>
+            <div>
+                <table class="wrap" id="bell_list" :style="isSaturday?'--border-color: var(--color-box-border)':'color: var(--color-text); --border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
+                    <tr class="notlast">
+                        <td>08:45</td>
+                        <td>-</td>
+                        <td>10:05</td>
+                    </tr>
+                    <tr class="notlast">
+                        <td>10:25</td>
+                        <td>-</td>
+                        <td>11:45</td>
+                    </tr>
+                    <tr class="notlast">
+                        <td>12:05</td>
+                        <td>-</td>
+                        <td>13:25</td>
+                    </tr>
+                    <tr>
+                        <td>13:35</td>
+                        <td>-</td>
+                        <td>14:55</td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <table id="saturday_bell_list" :style="!isSaturday?'--border-color: var(--color-box-border)':'--border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
+                    <tr class="notlast">
+                        <td>08:45</td>
+                        <td>-</td>
+                        <td>10:00</td>
+                    </tr>
+                    <tr class="notlast">
+                        <td>10:10</td>
+                        <td>-</td>
+                        <td>11:25</td>
+                    </tr>
+                    <tr class="notlast">
+                        <td>11:35</td>
+                        <td>-</td>
+                        <td>12:50</td>
+                    </tr>
+                    <tr>
+                        <td>13:00</td>
+                        <td>-</td>
+                        <td>14:15</td>
+                    </tr>
+                </table>
+            </div>
         </div>
-        <footer>
-            <img id="dummy" src="/public/dummy.png" alt="">
-        </footer>
+<!--        <footer>-->
+<!--            <img id="dummy" src="/public/dummy.png" alt="">-->
+<!--        </footer>-->
     </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .container {
-    margin: 1.6rem;
+    width: 100%;
     display: flex;
+    //flex-grow: 0 1;
     flex-direction: column;
-    min-height: 100vh;
     gap: 1rem;
 }
 
@@ -285,24 +289,28 @@ else if (today == 0) {
 }
 
 #progressBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 #titleBox {
-    width: 96%;
-    margin: auto;
-    margin-top: .5vw;
+    width: 98%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-end;
-    font-size: 3.4vw;
+    //font-size: 3.4vw;
+    font-size: 1.5rem;
     color: var(--color-text);
 }
 
 #title {
-    padding: .5vw;
+    padding: 1rem;
     text-align: center;
-    font-size: 5vw;
+    //font-size: 5vw;
+    font-size: 2rem;
+    font-weight: bold;
 }
 
 #timeBox {
@@ -368,24 +376,25 @@ else if (today == 0) {
 
 table {
     --border: .1rem;
-    position: relative;
-    width: 100%;
     background-color: var(--color-box);
+    border-radius: 1rem;
+    position: relative;
+    padding: 1rem;
+    width: 100%;
     color: var(--color-inactive-text);
     font-size: 2rem;
     text-align: center;
-    border-radius: 1rem;
     border: var(--border) solid transparent;
     background-clip: padding-box;
     border-collapse: collapse;
 }
 
 table::after {
+    content: '';
     position: absolute;
     top: calc(var(--border) * -1); bottom: calc(var(--border) * -1);
     left: calc(var(--border) * -1); right: calc(var(--border) * -1);
     background: var(--border-color);
-    content: '';
     z-index: -1;
     border-radius: 1rem;
 }
@@ -417,6 +426,10 @@ td {
     display: flex;
     justify-content: center;
     gap: 1rem;
+
+    div {
+        flex-grow: 1;
+    }
 }
 
 footer {

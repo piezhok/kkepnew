@@ -11,7 +11,7 @@
     <body>
         <div id="app"></div>
         <script type="module" src="/src/main.js"></script>
-        <style>
+        <style lang="scss">
             :root {
                 font-size: 62.5%;
                 --color-bg: #1C1C1C;
@@ -23,21 +23,36 @@
                 --shadow: 0 .25rem .25rem rgba(0, 0, 0, 0.25);
             }
 
-            body{
+            html, body {
+                width: 100%;
+                display: flex;
                 background-color: var(--color-bg);
                 /* background-color: var(--tg-theme-secondary-bg-color); */
                 overflow-x: hidden;
                 /* overflow-y: hidden; */
                 /* min-width: 100%; */
                 max-width: 100%;
+                min-height: 100vh;
                 /* max-width: 390px; */
                 margin: 0;
                 font-family: system-ui;
                 font-size: 1.6rem;
             }
 
+
             #app {
+                margin: 1.6rem;
+                display: flex;
+                flex-grow: 1;
+                flex-direction: column;
+                gap: 1rem;
+                min-height: 100vh;
                 padding: 0;
+                //margin: auto;
+                width: 100%;
+                display: flex;
+                justify-content: start;
+                align-items: center;
             }
         </style>
     </body>
