@@ -341,6 +341,7 @@ else if (today == 0) {
 }
 
 #timerPassed {
+    margin-bottom: -.4rem;
 }
 
 #timerLeft {
