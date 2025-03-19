@@ -413,7 +413,7 @@ tr {
     position: relative;
 }
 
-tr:not(:nth-child(4))::after {
+.notlast::after {
     content: "";
     position: absolute;
     display: block;
@@ -429,8 +429,8 @@ td {
     padding: .5rem 0;
 }
 
-.notlast>td {
-}
+//.notlast>td {
+//}
 
 #pairs_block {
     display: flex;
