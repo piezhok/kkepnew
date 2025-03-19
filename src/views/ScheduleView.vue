@@ -23,7 +23,7 @@ let dummy = document.getElementById('dummy');
 
 const timeLeft = ref("");
 const timePassed = ref("");
-const title = ref("");
+const title = ref("\u200B");
 const titleStart = ref("");
 const titleEnd = ref("");
 
