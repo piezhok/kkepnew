@@ -205,9 +205,9 @@ else if (today == 0) {
     <div class="container">
         <div id="progressBox">
             <div id="titleBox">
-                <div id="title-start">{{ titleStart }}10:05</div>
+                <div id="title-start">{{ titleStart }}</div>
                 <div id="title">{{ title }}</div>
-                <div id="title-end">{{ titleEnd }}11:45</div>
+                <div id="title-end">{{ titleEnd }}</div>
             </div>
             <div id="progress_bar">
                 <div id="progress_line" :style="`width: ${progressWidth}%`"></div>
@@ -219,8 +219,7 @@ else if (today == 0) {
         </div>
 
         <div id="pairs_block">
-<!--            <div>-->
-                <table id="bell_list" :style="isSaturday?'--border-color: var(--color-box-border)':'color: var(--color-text); --border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
+                <table class="wrap" id="bell_list" :style="isSaturday?'--border-color: var(--color-box-border)':'color: var(--color-text); --border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
                     <tr class="notlast">
                         <td>08:45</td>
                         <td>-</td>
@@ -242,9 +241,7 @@ else if (today == 0) {
                         <td>14:55</td>
                     </tr>
                 </table>
-<!--            </div>-->
-<!--            <div>-->
-                <table id="saturday_bell_list" :style="!isSaturday?'--border-color: var(--color-box-border)':'--border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
+                <table class="wrap" id="saturday_bell_list" :style="!isSaturday?'--border-color: var(--color-box-border)':'color: var(--color-text); --border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
                     <tr class="notlast">
                         <td>08:45</td>
                         <td>-</td>
@@ -266,7 +263,6 @@ else if (today == 0) {
                         <td>14:15</td>
                     </tr>
                 </table>
-<!--            </div>-->
         </div>
 <!--        <footer>-->
 <!--            <img id="dummy" src="/public/dummy.png" alt="">-->
@@ -306,7 +302,7 @@ else if (today == 0) {
 }
 
 #title {
-    padding: 1rem;
+    padding-bottom: 1rem;
     text-align: center;
     //font-size: 5vw;
     font-size: 2rem;
@@ -326,7 +322,7 @@ else if (today == 0) {
     justify-content: center;
     align-items: start;
     margin-left: 1rem;
-    gap: .2rem;
+    //gap: .2rem;
 }
 
 #timerPassed {
@@ -376,14 +372,12 @@ else if (today == 0) {
 
 table {
     --border: .1rem;
-    background-color: var(--color-box);
-    border-radius: 1rem;
     position: relative;
     width: 100%;
     color: var(--color-inactive-text);
     font-size: 2rem;
     text-align: center;
-    border: var(--border) solid transparent;
+    border: var(--border) solid transparent !important;
     background-clip: padding-box;
     //border-collapse: collapse;
 }
@@ -425,10 +419,7 @@ td {
     display: flex;
     justify-content: center;
     gap: 1rem;
-
-    div {
-        flex-grow: 1;
-    }
+    z-index: 2;
 }
 
 footer {
@@ -439,5 +430,33 @@ footer {
 img {
     width: 15vw;
     margin: auto;
+}
+
+@media (max-width: 400px) {
+    table {
+        font-size: 1.5rem;
+    }
+
+    #titleBox {
+        font-size: 1.2rem;
+    }
+
+    #title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 350px) {
+    table {
+        font-size: 1.2rem;
+    }
+
+    #titleBox {
+        font-size: 1rem;
+    }
+
+    #title {
+        font-size: 1.2rem;
+    }
 }
 </style>
