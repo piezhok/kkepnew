@@ -339,7 +339,6 @@ import {onMounted, ref, watch} from "vue";
     input[type="radio"] {
         all: unset;
         display: none;
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     }
 
     input[type="text"] {
@@ -350,7 +349,6 @@ import {onMounted, ref, watch} from "vue";
         padding: .8rem 1.2rem;
         border-radius: 1rem;
         font-size: 1.6rem;
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     }
 
     input[type="text"]::placeholder {
@@ -358,7 +356,6 @@ import {onMounted, ref, watch} from "vue";
     }
 
     label {
-        -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         all: unset;
         padding: 0 .8rem;
         text-align: center;

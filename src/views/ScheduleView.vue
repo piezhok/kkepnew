@@ -317,7 +317,7 @@ else if (today == 0) {
 }
 
 #title {
-    padding-bottom: 1rem;
+    padding-bottom: .5rem;
     text-align: center;
     //font-size: 5vw;
     font-size: 2rem;
