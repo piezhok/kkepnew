@@ -150,7 +150,7 @@ import {onMounted, ref, watch} from "vue";
         };
         floors.value = 1;
 
-        let map = L.map('map-container', { attributionControl:false }).setView([0, 0], 1);
+        let map = L.map('map-container', { attributionControl:false, zoomControl: false }).setView([0, 0], 1);
         let img = L.imageOverlay(`maps/${themeVal.value}/0-1.svg`, [[90, -110],[-90, 110]]).addTo(map);
 
         const setMap = (file) => {
