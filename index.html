@@ -16,13 +16,24 @@
         <style lang="scss">
             :root {
                 font-size: 62.5%;
+            }
+
+            .dark {
                 --color-bg: #1C1C1C;
                 --color-box: #282828;
                 --color-box-border: #3D3D3D;
                 --color-text: white;
                 --color-inactive-text: #808080;
-
                 --shadow: 0 .25rem .25rem rgba(0, 0, 0, 0.25);
+            }
+
+            .light {
+                --color-bg: #EFEFF3;
+                --color-box: #FFFFFF;
+                --color-box-border: #EAEAEA;
+                --color-text: black;
+                --color-inactive-text: #6D6D71;
+                --shadow: 0 .25rem .25rem rgba(189, 189, 189, 0.25);
             }
 
             html, body {
@@ -72,5 +83,14 @@
               opacity: 0 !important;
             }
         </style>
+        <script>
+            const app = document.querySelector('#app');
+            const theme = window.Telegram.WebApp.colorScheme;
+            if (theme == "dark") {
+                app.classList.toggle("dark");
+            } else {
+                app.classList.toggle("light");
+            }
+        </script>
     </body>
 </html>

@@ -5,6 +5,14 @@ import {onMounted, ref, watch} from "vue";
     const floors = defineModel("floors");
 
     const floorQuantity = ref(1);
+    const themeVal = ref("dark");
+
+    const theme = window.Telegram.WebApp.colorScheme;
+    if (theme == "dark") {
+        themeVal.value = "dark";
+    } else if (theme == "light") {
+        themeVal.value = "light";
+    }
 
     onMounted(() => {
         const markers = {
@@ -76,6 +84,34 @@ import {onMounted, ref, watch} from "vue";
                 {"loc": [66.513260, 6.328125], "title": "53"},
                 {"loc": [66.513260, 68.203125], "title": "54"}
             ],
+            "2-1": [
+                {"loc": [-37.718590, -166.640625], "title": "86"},
+                {"loc": [-72.181804, -225.000000], "title": "87"},
+                {"loc": [-14.604847, -271.406250], "title": "88"},
+                {"loc": [65.072130, -246.796875], "title": "89"},
+                {"loc": [69.411242, -68.906250], "title": "м мужской туалет"},
+                {"loc": [69.657086, -22.500000], "title": "ж женский туалет"},
+                {"loc": [-7.710992, 143.437500], "title": "столовая"}
+            ],
+            "2-2": [
+                {"loc": [63.548552, -147.656250], "title": "91"},
+                {"loc": [80.760615, -63.984375], "title": "92"},
+                {"loc": [73.428424, 7.734375], "title": "93"},
+                {"loc": [64.774125, 120.937500], "title": "вц1 вц 1 вычислительный центр 1"},
+                {"loc": [-66.231457, 88.593750], "title": "95"},
+                {"loc": [-74.211983, -0.703125], "title": "вц2 вц 2 вычислительный центр 2"},
+                {"loc": [-73.627789, -113.203125], "title": "вц3 вц 3 вычислительный центр 3"},
+                {"loc": [-71.965388, -225.000000], "title": "98"},
+                {"loc": [-17.308688, -250.312500], "title": "99"},
+                {"loc": [35.460670, -251.015625], "title": "100"},
+                {"loc": [-66.231457, 156.796875], "title": "104"},
+                {"loc": [65.946472, 236.250000], "title": "105"},
+                {"loc": [-36.597889, 248.203125], "title": "106"}
+            ],
+            "2-3": [
+                {"loc": [42.163403, -39.902344], "title": "101"},
+                {"loc": [-73.540855, -124.409180], "title": "102"}
+            ],
             "3-1": [
                 {"loc": [56.944974, -163.828125], "title": "м мужской туалет"},
                 {"loc": [-53.330873, -254.531250], "title": "55"},
@@ -115,11 +151,11 @@ import {onMounted, ref, watch} from "vue";
         floors.value = 1;
 
         let map = L.map('map-container', { attributionControl:false }).setView([0, 0], 1);
-        let img = L.imageOverlay('maps/0-1.svg', [[90, -110],[-90, 110]]).addTo(map);
+        let img = L.imageOverlay(`maps/${themeVal.value}/0-1.svg`, [[90, -110],[-90, 110]]).addTo(map);
 
         const setMap = (file) => {
             img.remove();
-            img = L.imageOverlay(`maps/${file}.svg`, [[-100,-300],[100, 300]]).addTo(map);
+            img = L.imageOverlay(`maps/${themeVal.value}/${file}.svg`, [[-100,-300],[100, 300]]).addTo(map);
         }
 
         let markersLayer = new L.LayerGroup();
@@ -129,7 +165,6 @@ import {onMounted, ref, watch} from "vue";
             markersLayer.remove();
             markersLayer = new L.LayerGroup();	//layer contain searched elements
             map.addLayer(markersLayer);
-            console.log(markers[data]);
             for(let i = 0; i < markers[data].length; i++) {
                 let title = markers[data][i].title,	//value searched
                     loc = markers[data][i].loc,		//position found
