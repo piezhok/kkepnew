@@ -1,6 +1,21 @@
 <script setup>
 import {ref} from "vue";
 
+const isDark = ref(true);
+const gradient = ref();
+const theme = window.Telegram.WebApp.colorScheme;
+if (theme == "dark") {
+    isDark.value = true;
+} else if (theme == "light") {
+    isDark.value = false;
+}
+
+if (isDark.value) {
+    gradient.value = "rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%";
+} else {
+    gradient.value = "#FB41A2 0%, #007FE0 50%, #01CB56 100%";
+}
+
 const PAIR_DURATION = 4800000; // В миллисекундах
 const SATURDAY_PAIR_DURATION = 4500000;
 
@@ -210,7 +225,7 @@ else if (today == 0) {
                 <div id="title-end">{{ titleEnd }}</div>
             </div>
             <div id="progress_bar">
-                <div id="progress_line" :style="`width: ${progressWidth}%`"></div>
+                <div id="progress_line" :style="`width: ${progressWidth}%; --gradient: linear-gradient(90deg, ${gradient});`"></div>
                 <div id="timeBox">
                     <div class="text" id="timerPassed" :hidden="title === `Перерыв`">{{ timePassed }}</div>
                     <div class="text" id="timerLeft">{{ timeLeft }}</div>
@@ -219,7 +234,7 @@ else if (today == 0) {
         </div>
 
         <div id="pairs_block">
-                <table class="wrap" id="bell_list" :style="isSaturday?'--border-color: var(--color-box-border)':'color: var(--color-text); --border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
+                <table class="wrap" id="bell_list" :style="isSaturday?`--border-color: var(--color-box-border)`:`color: var(--color-text); --border-color: linear-gradient(125deg, ${gradient});`">
                     <tr class="notlast">
                         <td>08:45</td>
                         <td>-</td>
@@ -241,7 +256,7 @@ else if (today == 0) {
                         <td>14:55</td>
                     </tr>
                 </table>
-                <table class="wrap" id="saturday_bell_list" :style="!isSaturday?'--border-color: var(--color-box-border)':'color: var(--color-text); --border-color: linear-gradient(125deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);'">
+                <table class="wrap" id="saturday_bell_list" :style="!isSaturday?'--border-color: var(--color-box-border)':`color: var(--color-text); --border-color: linear-gradient(125deg, ${gradient});`">
                     <tr class="notlast">
                         <td>08:45</td>
                         <td>-</td>
@@ -353,6 +368,7 @@ else if (today == 0) {
 }
 
 #progress_line {
+    //--gradient: linear-gradient(90deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);
     width: 0%;
     height: 100%;
     background-color: white;
@@ -367,7 +383,7 @@ else if (today == 0) {
     left:0;
     right:0;
     bottom:0;
-    background-image: linear-gradient(90deg, rgba(240,5,127,1) 0%, rgba(0,98,173,1) 50%, rgba(0,156,66,1) 100%);
+    background-image: var(--gradient);
 }
 
 table {
