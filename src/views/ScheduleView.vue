@@ -413,7 +413,7 @@ tr {
     position: relative;
 }
 
-tr:not(:last-child)::after {
+tr:not(:nth-child(4))::after {
     content: "";
     position: absolute;
     display: block;
