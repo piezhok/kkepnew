@@ -19,6 +19,8 @@ import {nextTick, onMounted, ref, watch} from "vue";
     const mapContainerEl = ref(null);
 
     onMounted(async () => {
+        window.Telegram.WebApp.setHeaderColor("--color-bg")
+
         await nextTick();
         const markers = {
             "0-1": [
@@ -332,13 +334,19 @@ import {nextTick, onMounted, ref, watch} from "vue";
         isTouched.value = false;
     }
 
+    window.Telegram.WebApp.BackButton.onClick = () => {
+        isFullscreen.value = true;
+    }
+
     watch(isFullscreen, (val) => {
         if (val) {
+            window.Telegram.WebApp.BackButton.show();
             mapEl.value.style.setProperty("margin-bottom", "var(--fullscreen-marginBottom)");
             // mapEl.value.style.setProperty("height", "var(--default-height)");
             mapContainerEl.value.style.setProperty("height", "var(--fullscreen-height-map)");
             console.log(mapContainerEl.value);
         } else {
+            window.Telegram.WebApp.BackButton.hide();
             mapEl.value.style.setProperty("margin-bottom", "0");
             // mapEl.value.style.setProperty("height", "var(--default-height)");
             mapContainerEl.value.style.setProperty("height", "var(--default-height-map)");
