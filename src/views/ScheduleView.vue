@@ -210,10 +210,16 @@ if (today != 6 && today != 0) {
     isSaturday.value = true;
 }
 else if (today == 0) {
-    title.value = `Выходной`
-    timePassed.value = 'Приятного';
-    timeLeft.value = 'отдыха!';
-    progressWidth.value = 100;
+    // title.value = `Выходной`
+    // timePassed.value = 'Приятного';
+    // timeLeft.value = 'отдыха!';
+    // progressWidth.value = 100;
+    title.value = `3 пара`
+    timePassed.value = 'Прошло 42 минуты';
+    timeLeft.value = 'Осталось 38 минут';
+    titleStart.value = '12:05';
+    titleEnd.value = '13:25';
+    progressWidth.value = 60;
 }
 </script>
 
