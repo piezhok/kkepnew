@@ -200,7 +200,7 @@ let touchEvent = 'ontouchstart' in window ? 'touchstart' : 'click';
 //      ИНТЕРВАЛЫ
 //
 let today = new Date().getDay();
-if (today != 6 && today !=0) {
+if (today != 6) {
     let interval = setInterval(getTime, 1000, PAIRS_HOURSTART, PAIRS_MINSTART, BREAKS_HOURSTART, BREAKS_MINSTART);
     // highlight();
     isSaturday.value = false;
@@ -209,12 +209,12 @@ if (today != 6 && today !=0) {
     // highlight();
     isSaturday.value = true;
 }
-else if (today == 0) {
-    title.value = `Выходной`
-    timePassed.value = 'Приятного';
-    timeLeft.value = 'отдыха!';
-    progressWidth.value = 100;
-}
+// else if (today == 0) {
+//     title.value = `Выходной`
+//     timePassed.value = 'Приятного';
+//     timeLeft.value = 'отдыха!';
+//     progressWidth.value = 100;
+// }
 </script>
 
 <template>
