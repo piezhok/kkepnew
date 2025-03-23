@@ -301,8 +301,8 @@ import {nextTick, onMounted, ref, watch} from "vue";
     const isFullscreen = ref(false);
     const tempTransform =ref(0);
     let firstTouch = 0;
-    let movedTouch = 0;
-    let diffTouch = 0;
+    let movedTouch = ref(0);
+    let diffTouch = ref(0);
     window.Telegram.WebApp.BackButton.onClick(() => {
         isFullscreen.value = false;
     });
@@ -313,23 +313,25 @@ import {nextTick, onMounted, ref, watch} from "vue";
     }
 
     const touchMove = (event) => {
-        if (isTouched.value && Math.abs(movedTouch - firstTouch) > 10) {
-            movedTouch = event.touches[0].clientY;
-            diffTouch = movedTouch - firstTouch;
-            if (!isFullscreen.value && diffTouch < 0) {
+        if (isTouched.value && Math.abs(movedTouch.value - firstTouch) > 50) {
+            movedTouch.value = event.touches[0].clientY;
+            if (!isFullscreen.value && movedTouch.value - firstTouch < 0) {
                 tempTransform.value = -15;
-            } else if (isFullscreen.value && diffTouch > 0) {
+            } else if (isFullscreen.value && movedTouch.value - firstTouch > 0) {
                 tempTransform.value = 15;
+            } else {
+                tempTransform.value = 0;
             }
         };
     }
 
     const touchEnd = (event) => {
-        if (diffTouch != 0) {
+        diffTouch.value = event.changedTouches[0].clientY - firstTouch;
+        if (diffTouch.value != 0) {
             tempTransform.value = 0;
-            if (isFullscreen.value && diffTouch > 0) {
+            if (isFullscreen.value && diffTouch.value > 0) {
                 isFullscreen.value = false;
-            } else if (!isFullscreen.value && diffTouch < 0) {
+            } else if (!isFullscreen.value && diffTouch.value < 0) {
                 isFullscreen.value = true;
             }
         }
