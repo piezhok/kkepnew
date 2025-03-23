@@ -335,7 +335,7 @@ import {nextTick, onMounted, ref, watch} from "vue";
     }
 
     window.Telegram.WebApp.BackButton.onClick = () => {
-        isFullscreen.value = true;
+        isFullscreen.value = false;
     }
 
     watch(isFullscreen, (val) => {
