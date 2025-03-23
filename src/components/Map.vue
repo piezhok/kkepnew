@@ -19,8 +19,6 @@ import {nextTick, onMounted, ref, watch} from "vue";
     const mapContainerEl = ref(null);
 
     onMounted(async () => {
-        window.Telegram.WebApp.setHeaderColor("--color-bg")
-
         await nextTick();
         const markers = {
             "0-1": [

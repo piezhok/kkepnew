@@ -412,7 +412,7 @@ table::after {
     border-radius: 1rem;
 }
 
-tr {
+.notlast {
     position: relative;
 }
 
