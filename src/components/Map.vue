@@ -238,6 +238,7 @@ import {nextTick, onMounted, ref, watch} from "vue";
 
         document.querySelector(".search-box").addEventListener("keydown", (event) => {
             if (event.key === 'Enter') {
+                document.querySelector(".search-box").blur();
                 startSearch(search.value);
             }
         })
@@ -490,7 +491,7 @@ import {nextTick, onMounted, ref, watch} from "vue";
 
     input[type="search"]::-webkit-search-cancel-button {
         appearance: none;
-        background: url('public/cross.svg') no-repeat center;
+        background: url('/public/cross.svg') no-repeat center;
         width: 1em;
         height: 1em;
         cursor: pointer;

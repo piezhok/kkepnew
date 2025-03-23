@@ -55,7 +55,8 @@
                 /* overflow-y: hidden; */
                 /* min-width: 100%; */
                 max-width: 100%;
-                min-height: 100vh;
+                //min-height: 100vh;
+                height: var(--fixed-height);
                 //max-height: 100vh;
                 //overflow: hidden;
                 /* max-width: 390px; */
@@ -99,6 +100,12 @@
         <script>
             const app = document.querySelector('#app');
             const theme = window.Telegram.WebApp.colorScheme;
+
+            document.addEventListener("DOMContentLoaded", function() {
+                const fixedHeight = window.innerHeight;
+                document.documentElement.style.setProperty('--fixed-height', `${fixedHeight}px`);
+            });
+
             if (theme == "dark") {
                 app.classList.toggle("dark");
             } else {
