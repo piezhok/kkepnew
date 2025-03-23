@@ -98,7 +98,6 @@
             }
         </style>
         <script>
-            window.Telegram.WebApp.setHeaderColor("--color-bg")
             const app = document.querySelector('#app');
             const theme = window.Telegram.WebApp.colorScheme;
 
@@ -112,6 +111,7 @@
             } else {
                 app.classList.toggle("light");
             }
+            window.Telegram.WebApp.setHeaderColor("--color-bg");
         </script>
     </body>
 </html>
