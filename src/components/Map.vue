@@ -236,11 +236,9 @@ import {nextTick, onMounted, ref, watch} from "vue";
             typingTimer = setTimeout(() => startSearch(val), 500);
         });
 
-        document.querySelector(".search-box").addEventListener("keydown", (event) => {
+        document.querySelector("#search").addEventListener("keydown", (event) => {
             if (event.key === 'Enter') {
-                input.readOnly = true;
-                input.blur();
-                input.readOnly = false;
+                document.querySelector("#search").blur();
                 startSearch(search.value);
             }
         })
