@@ -94,6 +94,7 @@ import {nextTick, onMounted, ref, watch} from "vue";
                 {"loc": [-72.181804, -225.000000], "title": "87"},
                 {"loc": [-14.604847, -271.406250], "title": "88"},
                 {"loc": [65.072130, -246.796875], "title": "89"},
+                {"loc": [65.366837, -175.078125], "title": "90"},
                 {"loc": [69.411242, -68.906250], "title": "м мужской туалет"},
                 {"loc": [69.657086, -22.500000], "title": "ж женский туалет"},
                 {"loc": [-7.710992, 143.437500], "title": "столовая"}
@@ -326,16 +327,16 @@ import {nextTick, onMounted, ref, watch} from "vue";
     }
 
     const touchEnd = (event) => {
+        isTouched.value = false;
         diffTouch.value = event.changedTouches[0].clientY - firstTouch;
         if (diffTouch.value != 0) {
             tempTransform.value = 0;
-            if (isFullscreen.value && diffTouch.value > 0) {
+            if (isFullscreen.value && diffTouch.value > 50) {
                 isFullscreen.value = false;
-            } else if (!isFullscreen.value && diffTouch.value < 0) {
+            } else if (!isFullscreen.value && diffTouch.value < -50) {
                 isFullscreen.value = true;
             }
         }
-        isTouched.value = false;
     }
 
 
