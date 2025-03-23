@@ -238,7 +238,9 @@ import {nextTick, onMounted, ref, watch} from "vue";
 
         document.querySelector(".search-box").addEventListener("keydown", (event) => {
             if (event.key === 'Enter') {
-                document.querySelector(".search-box").blur();
+                input.readOnly = true;
+                input.blur();
+                input.readOnly = false;
                 startSearch(search.value);
             }
         })
@@ -298,6 +300,7 @@ import {nextTick, onMounted, ref, watch} from "vue";
     // }
     const isTouched = ref(false);
     const isFullscreen = ref(false);
+    const tempTransform =ref(0);
     let firstTouch = 0;
     let movedTouch = 0;
     let diffTouch = 0;
@@ -311,12 +314,17 @@ import {nextTick, onMounted, ref, watch} from "vue";
         if (isTouched.value && Math.abs(movedTouch - firstTouch) > 10) {
             movedTouch = event.touches[0].clientY;
             diffTouch = movedTouch - firstTouch;
+            if (!isFullscreen.value && diffTouch < 0) {
+                tempTransform.value = -15;
+            } else if (isFullscreen.value && diffTouch > 0) {
+                tempTransform.value = 15;
+            }
         };
     }
 
     const touchEnd = (event) => {
-        // console.log("dddd");
         if (diffTouch != 0) {
+            tempTransform.value = 0;
             if (isFullscreen.value && diffTouch > 0) {
                 isFullscreen.value = false;
             } else if (!isFullscreen.value && diffTouch < 0) {
@@ -343,7 +351,7 @@ import {nextTick, onMounted, ref, watch} from "vue";
 
 <template>
     <div class="map" ref="mapEl">
-        <div class="wrap input-container"
+        <div class="wrap input-container" :style="`transform: translateY(${tempTransform}%)`"
              @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd">
             <div class="search-box">
                 <input v-model="search" type="search" name="search" id="search" placeholder="Поиск">
@@ -401,11 +409,13 @@ import {nextTick, onMounted, ref, watch} from "vue";
         z-index: 99;
         //padding-top: 17rem;
         //padding-top: 100%;
-        transition: all .5s ease-in-out;
+        transition: all .5s ease;
         background-color: var(--color-bg);
         box-sizing: content-box;
         align-self: center;
         padding: 0 .5rem;
+        border-radius: 2rem;
+        //transform: translateY(80%);
     }
 
     .input-container {
@@ -413,11 +423,12 @@ import {nextTick, onMounted, ref, watch} from "vue";
         flex-direction: column;
         align-items: center;
         padding: 1.2rem .8rem;
+        padding-top: .6rem;
         background-color: var(--color-box);
         color: var(--color-inactive-text);
         width: 100%;
         gap: 1.2rem;
-        transition: all .5s ease-in-out;
+        transition: all .5s ease;
 
         div {
             width: 100%;
@@ -461,6 +472,7 @@ import {nextTick, onMounted, ref, watch} from "vue";
         padding: .8rem 1.2rem;
         border-radius: 1rem;
         font-size: 1.6rem;
+        box-sizing: border-box;
     }
 
     input[type="search"]::placeholder {
@@ -486,7 +498,7 @@ import {nextTick, onMounted, ref, watch} from "vue";
         width: 100%;
         height: 30rem;
         flex-grow: 1;
-        transition: all .5s ease-in-out;
+        transition: all .5s ease;
     }
 
     input[type="search"]::-webkit-search-cancel-button {
@@ -513,6 +525,25 @@ import {nextTick, onMounted, ref, watch} from "vue";
     input:focus {
         outline: none;
         border-color: var(--color-box-border); /* или любой цвет */
+    }
+
+    .search-box {
+        display: flex;
+        flex-direction: column !important;
+        justify-content: center;
+        gap: .8rem;
+    }
+
+    .search-box::before {
+        content: "";
+        display: block;
+        //position: absolute;
+        top: -1rem;
+        width: 15%;
+        height: .2rem;
+        background-color: var(--color-box-border);
+        justify-self: center;
+
     }
 
     @media (max-width: 400px) {
