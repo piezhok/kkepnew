@@ -399,7 +399,7 @@ table, .list {
     //border-collapse: collapse;
 }
 
-table::after {
+.list::after {
     content: '';
     position: absolute;
     top: calc(var(--border) * -1); bottom: calc(var(--border) * -1);
