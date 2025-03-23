@@ -278,10 +278,7 @@ import {nextTick, onMounted, ref, watch} from "vue";
                 zoom.value = 0.4;
             }
         })
-        
-        window.Telegram.WebApp.BackButton.onClick = () => {
-            isFullscreen.value = false;
-        }
+
     })
 
 
@@ -306,6 +303,9 @@ import {nextTick, onMounted, ref, watch} from "vue";
     let firstTouch = 0;
     let movedTouch = 0;
     let diffTouch = 0;
+    window.Telegram.WebApp.BackButton.onClick(() => {
+        isFullscreen.value = false;
+    });
 
     const touchStart = (event) => {
         isTouched.value = true;
