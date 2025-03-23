@@ -543,7 +543,7 @@ import {nextTick, onMounted, ref, watch} from "vue";
         height: .2rem;
         background-color: var(--color-box-border);
         justify-self: center;
-
+        border-radius: 1rem;
     }
 
     @media (max-width: 400px) {
