@@ -1,4 +1,5 @@
 <script setup>
+import Map from "@/components/Map.vue";
 import {ref} from "vue";
 
 const isDark = ref(true);
@@ -282,6 +283,7 @@ else if (today == 0) {
 <!--        <footer>-->
 <!--            <img id="dummy" src="/public/dummy.png" alt="">-->
 <!--        </footer>-->
+        <Map />
     </div>
 </template>
 
@@ -292,6 +294,7 @@ else if (today == 0) {
     //flex-grow: 0 1;
     flex-direction: column;
     gap: 1rem;
+    position: relative;
 }
 
 .text {

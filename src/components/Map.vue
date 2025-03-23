@@ -1,11 +1,12 @@
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {nextTick, onMounted, ref, watch} from "vue";
     const search = defineModel("search");
     const buildings = defineModel("buildings");
     const floors = defineModel("floors");
 
     const floorQuantity = ref(1);
     const themeVal = ref("dark");
+    const zoom = ref(0.4)
 
     const theme = window.Telegram.WebApp.colorScheme;
     if (theme == "dark") {
@@ -14,7 +15,11 @@ import {onMounted, ref, watch} from "vue";
         themeVal.value = "light";
     }
 
-    onMounted(() => {
+    const mapEl = ref(null);
+    const mapContainerEl = ref(null);
+
+    onMounted(async () => {
+        await nextTick();
         const markers = {
             "0-1": [
                 {"loc": [-48.224673, 95.976563], "title": "108"},
@@ -151,7 +156,7 @@ import {onMounted, ref, watch} from "vue";
         floors.value = 1;
 
         let map = L.map('map-container', { attributionControl:false, zoomControl: false }).setView([0, 0], 0.05);
-        let img = L.imageOverlay(`maps/${themeVal.value}/0-1.svg`, [[90, -110],[-90, 110]]).addTo(map);
+        let img = L.imageOverlay(`maps/${themeVal.value}/0-1.svg`, [[-100,-300],[100, 300]]).addTo(map);
 
         const setMap = (file) => {
             img.remove();
@@ -195,38 +200,83 @@ import {onMounted, ref, watch} from "vue";
             setMarkers(`${buildings.value}-${val}`);
         });
         let typingTimer = null;
+
+        const startSearch = (val) => {
+            if (val === "") {
+                return;
+            } else if ((val.toLowerCase() === "м" || val.toLowerCase() === "ж") && buildings.value != 0) {
+                let toilet = val.toLowerCase() === "м" ? "мужской" : "женский";
+                for (let i = 1; i <= floorQuantity.value; i++) {
+                    markers[`${buildings.value}-${i}`].forEach((element) => {
+                        if (element.title.includes(toilet)) {
+                            floors.value = i;
+                            map.flyTo(element.loc, zoom.value, { duration: .5 });
+                        }
+                    })
+                }
+            } else {
+                let shouldBreak = false;
+                for (const key of Object.keys(markers)) {
+                    // Object.keys(markers).forEach((key) => {
+                    markers[key].forEach((element) => {
+                        if ((/[а-яА-Я]/.test(val) && element.title.includes(val.toLowerCase()) || (!/[а-яА-Я]/.test(val) && element.title === val.toLowerCase()))) {
+                            buildings.value = key[0];
+                            setTimeout(() => floors.value = key[2], 0);
+                            map.flyTo(element.loc, zoom.value, { duration: .5 });
+                            shouldBreak = true;
+                        }
+                    })
+                    if (shouldBreak) {break;}
+                }
+            }
+        }
+
         watch(search, (val) => {
             clearTimeout(typingTimer);
-            typingTimer = setTimeout(() => {
-                if (val === "") {
-                    return;
-                } else if ((val.toLowerCase() === "м" || val.toLowerCase() === "ж") && buildings.value != 0) {
-                    let toilet = val.toLowerCase() === "м" ? "мужской" : "женский";
-                    for (let i = 1; i <= floorQuantity.value; i++) {
-                        markers[`${buildings.value}-${i}`].forEach((element) => {
-                            if (element.title.includes(toilet)) {
-                                floors.value = i;
-                                map.flyTo(element.loc, 1, { duration: .5 });
-                            }
-                        })
-                    }
-                } else {
-                    let shouldBreak = false;
-                    for (const key of Object.keys(markers)) {
-                    // Object.keys(markers).forEach((key) => {
-                        markers[key].forEach((element) => {
-                            if ((/[а-яА-Я]/.test(val) && element.title.includes(val.toLowerCase()) || (!/[а-яА-Я]/.test(val) && element.title === val.toLowerCase()))) {
-                                buildings.value = key[0];
-                                setTimeout(() => floors.value = key[2], 0);
-                                map.flyTo(element.loc, 1, { duration: .5 });
-                                shouldBreak = true;
-                            }
-                        })
-                        if (shouldBreak) {break;}
-                    }
-                }
-            }, 500);
+            typingTimer = setTimeout(() => startSearch(val), 500);
         });
+
+        document.querySelector(".search-box").addEventListener("keydown", (event) => {
+            if (event.key === 'Enter') {
+                startSearch(search.value);
+            }
+        })
+
+        const windowHeight = window.innerHeight;
+        const elementTop =  document.querySelector(".map").getBoundingClientRect().top;
+        const map_elementTop =  document.querySelector("#map-container").getBoundingClientRect().top;
+        const inputHeight =  document.querySelector(".input-container").getBoundingClientRect().height;
+        // const remainingHeight = windowHeight - elementTop;
+        const map_remainingHeight = windowHeight - map_elementTop;
+        const map_fullscreenHeight = windowHeight - inputHeight;
+        // document.querySelector(".map").style.height = `calc(${remainingHeight}px - 1rem)`;
+        // document.querySelector(".map").style.marginBottom = `calc(${elementTop}px - 1rem)`;
+        // console.log(remainingHeight);
+        // const mapTop =  document.querySelector("#map-container").getBoundingClientRect().top;
+        // document.querySelector("#map-container").style.height = `calc(${windowHeight - inputHeight}px - 3rem)`;
+        // const fullscreen_marginBottom = ref(`calc(${elementTop}px - 1rem)`);
+        // const fullscreen_height = ref(`calc(${windowHeight - inputHeight}px - 3rem)`);
+        // const default_height = ref(`calc(${remainingHeight}px - 1rem)`);
+        if (mapEl.value) {
+            mapEl.value.style.setProperty("--fullscreen-marginBottom", `calc(${elementTop}px - 1rem)`);
+            mapEl.value.style.setProperty("--fullscreen-height-map", `calc(${map_fullscreenHeight}px - 3rem)`);
+            // mapEl.value.style.setProperty("--default-height", `calc(${remainingHeight}px - 1rem)`);
+            mapEl.value.style.setProperty("--default-height-map", `calc(${map_remainingHeight}px - 1rem)`);
+        }
+        map.invalidateSize();
+
+        watch(isFullscreen, (val) => {
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 500)
+            if (val) {
+                map.flyTo([0, 0], 0.5, { duration: .5 });
+                zoom.value = 0.9;
+            } else {
+                map.flyTo([0, 0], 0, { duration: .5 });
+                zoom.value = 0.4;
+            }
+        })
     })
 
 
@@ -245,13 +295,57 @@ import {onMounted, ref, watch} from "vue";
     //         floorQuantity.value = 2;
     //     }
     // }
+    const isTouched = ref(false);
+    const isFullscreen = ref(false);
+    let firstTouch = 0;
+    let movedTouch = 0;
+    let diffTouch = 0;
+
+    const touchStart = (event) => {
+        isTouched.value = true;
+        firstTouch = event.touches[0].clientY;
+    }
+
+    const touchMove = (event) => {
+        if (isTouched.value && Math.abs(movedTouch - firstTouch) > 10) {
+            movedTouch = event.touches[0].clientY;
+            diffTouch = movedTouch - firstTouch;
+        };
+    }
+
+    const touchEnd = (event) => {
+        // console.log("dddd");
+        if (diffTouch != 0) {
+            if (isFullscreen.value && diffTouch > 0) {
+                isFullscreen.value = false;
+            } else if (!isFullscreen.value && diffTouch < 0) {
+                isFullscreen.value = true;
+            }
+        }
+        isTouched.value = false;
+    }
+
+    watch(isFullscreen, (val) => {
+        if (val) {
+            mapEl.value.style.setProperty("margin-bottom", "var(--fullscreen-marginBottom)");
+            // mapEl.value.style.setProperty("height", "var(--default-height)");
+            mapContainerEl.value.style.setProperty("height", "var(--fullscreen-height-map)");
+            console.log(mapContainerEl.value);
+        } else {
+            mapEl.value.style.setProperty("margin-bottom", "0");
+            // mapEl.value.style.setProperty("height", "var(--default-height)");
+            mapContainerEl.value.style.setProperty("height", "var(--default-height-map)");
+            console.log(mapContainerEl.value);
+        }
+    })
 </script>
 
 <template>
-    <div class="map">
-        <div class="wrap input-container">
+    <div class="map" ref="mapEl">
+        <div class="wrap input-container"
+             @touchstart="touchStart" @touchmove="touchMove" @touchend="touchEnd">
             <div class="search-box">
-                <input v-model="search" type="text" name="search" id="search" placeholder="Поиск">
+                <input v-model="search" type="search" name="search" id="search" placeholder="Поиск">
             </div>
             <div class="buildings-box">
                 <span>
@@ -282,19 +376,35 @@ import {onMounted, ref, watch} from "vue";
                 </span>
             </div>
         </div>
-        <div class="wrap" id="map-container">
+        <div class="wrap" ref="mapContainerEl" id="map-container" style="height: var(--default-height-map)">
         </div>
     </div>
 </template>
 
 <style scoped lang="scss">
     .map {
+        //--fullscreen-marginBottom: 0;
+        //--fullscreen-height-map: 0;
+        //--default-height: 0;
+        //--default-height-map: 0;
         width: 100%;
-        height: 100%;
+        //height: 100%;
         display: flex;
         flex-direction: column;
         gap: 1rem;
-        flex-grow: 1;
+        //flex-grow: 1;
+        position: absolute;
+        transform: translateY(100%);
+        //margin-bottom: 40rem;
+        bottom: -1rem;
+        z-index: 99;
+        //padding-top: 17rem;
+        //padding-top: 100%;
+        transition: all .5s ease-in-out;
+        background-color: var(--color-bg);
+        box-sizing: content-box;
+        align-self: center;
+        padding: 0 .5rem;
     }
 
     .input-container {
@@ -306,6 +416,7 @@ import {onMounted, ref, watch} from "vue";
         color: var(--color-inactive-text);
         width: 100%;
         gap: 1.2rem;
+        transition: all .5s ease-in-out;
 
         div {
             width: 100%;
@@ -341,7 +452,7 @@ import {onMounted, ref, watch} from "vue";
         display: none;
     }
 
-    input[type="text"] {
+    input[type="search"] {
         all: unset;
         width: 100%;
         background-color: var(--color-box-border);
@@ -351,7 +462,7 @@ import {onMounted, ref, watch} from "vue";
         font-size: 1.6rem;
     }
 
-    input[type="text"]::placeholder {
+    input[type="search"]::placeholder {
         color: var(--color-inactive-text);
     }
 
@@ -372,8 +483,35 @@ import {onMounted, ref, watch} from "vue";
 
     #map-container {
         width: 100%;
-        height: 100%;
+        height: 30rem;
         flex-grow: 1;
+        transition: all .5s ease-in-out;
+    }
+
+    input[type="search"]::-webkit-search-cancel-button {
+        appearance: none;
+        background: url('public/cross.svg') no-repeat center;
+        width: 1em;
+        height: 1em;
+        cursor: pointer;
+    }
+
+    /* Для Chrome, Safari, Edge */
+    input:-webkit-autofill {
+        box-shadow: 0 0 0 1000px var(--color-box-border) inset;
+        -webkit-box-shadow: 0 0 0 1000px var(--color-box-border) inset;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    /* Для Firefox */
+    input:-moz-ui-invalid {
+        box-shadow: none;
+    }
+
+    /* Общие стили для фокуса */
+    input:focus {
+        outline: none;
+        border-color: var(--color-box-border); /* или любой цвет */
     }
 
     @media (max-width: 400px) {
