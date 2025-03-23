@@ -235,50 +235,42 @@ else if (today == 0) {
         </div>
 
         <div id="pairs_block">
-                <table class="wrap" id="bell_list" :style="isSaturday?`--border-color: var(--color-box-border)`:`color: var(--color-text); --border-color: linear-gradient(125deg, ${gradient});`">
-                    <tr class="notlast">
-                        <td>08:45</td>
-                        <td>-</td>
-                        <td>10:05</td>
-                    </tr>
-                    <tr class="notlast">
-                        <td>10:25</td>
-                        <td>-</td>
-                        <td>11:45</td>
-                    </tr>
-                    <tr class="notlast">
-                        <td>12:05</td>
-                        <td>-</td>
-                        <td>13:25</td>
-                    </tr>
-                    <tr>
-                        <td>13:35</td>
-                        <td>-</td>
-                        <td>14:55</td>
-                    </tr>
-                </table>
-                <table class="wrap" id="saturday_bell_list" :style="!isSaturday?'--border-color: var(--color-box-border)':`color: var(--color-text); --border-color: linear-gradient(125deg, ${gradient});`">
-                    <tr class="notlast">
-                        <td>08:45</td>
-                        <td>-</td>
-                        <td>10:00</td>
-                    </tr>
-                    <tr class="notlast">
-                        <td>10:10</td>
-                        <td>-</td>
-                        <td>11:25</td>
-                    </tr>
-                    <tr class="notlast">
-                        <td>11:35</td>
-                        <td>-</td>
-                        <td>12:50</td>
-                    </tr>
-                    <tr>
-                        <td>13:00</td>
-                        <td>-</td>
-                        <td>14:15</td>
-                    </tr>
-                </table>
+                <div class="wrap list" id="bell_list" :style="isSaturday?`--border-color: var(--color-box-border)`:`color: var(--color-text); --border-color: linear-gradient(125deg, ${gradient});`">
+                    <div class="row notlast">
+                        <div>08:45</div>
+                        <div>10:05</div>
+                    </div>
+                    <div class="row notlast">
+                        <div>10:25</div>
+                        <div>11:45</div>
+                    </div>
+                    <div class="row notlast">
+                        <div>12:05</div>
+                        <div>13:25</div>
+                    </div>
+                    <div class="row">
+                        <div>13:35</div>
+                        <div>14:55</div>
+                    </div>
+                </div>
+                <div class="wrap list" id="saturday_bell_list" :style="!isSaturday?'--border-color: var(--color-box-border)':`color: var(--color-text); --border-color: linear-gradient(125deg, ${gradient});`">
+                    <div class="row notlast">
+                        <div>08:45</div>
+                        <div>10:00</div>
+                    </div>
+                    <div class="row notlast">
+                        <div>10:10</div>
+                        <div>11:25</div>
+                    </div>
+                    <div class="row notlast">
+                        <div>11:35</div>
+                        <div>12:50</div>
+                    </div>
+                    <div class="row">
+                        <div>13:00</div>
+                        <div>14:15</div>
+                    </div>
+                </div>
         </div>
 <!--        <footer>-->
 <!--            <img id="dummy" src="/public/dummy.png" alt="">-->
@@ -390,7 +382,12 @@ else if (today == 0) {
     background-image: var(--gradient);
 }
 
-table {
+table, .list {
+    .row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        padding: .5rem 0;
+    }
     --border: .1rem;
     position: relative;
     width: 100%;
@@ -429,7 +426,6 @@ table::after {
 }
 
 td {
-    padding: .5rem 0;
 }
 
 //.notlast>td {
@@ -453,7 +449,7 @@ img {
 }
 
 @media (max-width: 400px) {
-    table {
+    .list {
         font-size: 1.5rem;
     }
 
@@ -467,7 +463,7 @@ img {
 }
 
 @media (max-width: 350px) {
-    table {
+    .list {
         font-size: 1.2rem;
     }
 

@@ -108,10 +108,11 @@
 
             if (theme == "dark") {
                 app.classList.toggle("dark");
+                window.Telegram.WebApp.setHeaderColor("#1C1C1C");
             } else {
                 app.classList.toggle("light");
+                window.Telegram.WebApp.setHeaderColor("#EFEFF3");
             }
-            window.Telegram.WebApp.setHeaderColor("#1C1C1C");
         </script>
     </body>
 </html>
